@@ -18,6 +18,7 @@ A Java web application with a user interface (Bootstrap) that simulates the admi
 - Implemented. Confirmation of the transfer of the reservation object for payment to the Customer. For users with the roles Manager or Administrator.
 - Implemented. Imitation of payment by the client. The first option is a payment by click. The second option is to download the PDF file with the invoice.
 - Implemented. Sending an invoice by email.
+- On development stage. Unit test. 43% methods / 37% lines.  
 
 ![model structure](auxiliary/schema.png)
 
@@ -29,7 +30,9 @@ A Java web application with a user interface (Bootstrap) that simulates the admi
 - JSON
 - Maven
 - Tomcat
-- PDFBox
+- JUnit 5
+- Mockito
+- iText PDF
 
 ## <a id="how-to-run"></a>How to run
 - Fill real variables names to db_sql.properties.
