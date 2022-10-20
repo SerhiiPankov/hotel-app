@@ -32,6 +32,8 @@ public interface BookingDao {
     int getNumberOfBookingPerCustomer(Long customerId, PaymentStatus paymentStatus)
             throws DataProcessingException;
 
+    long getCustomerIdByBookingId(long bookingId) throws DataProcessingException;
+
     Booking createBooking(Booking booking) throws DataProcessingException;
 
     Booking createReserve(Booking booking, Long bookingRequestId)

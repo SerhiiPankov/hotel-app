@@ -34,7 +34,7 @@ public class UserAccountServlet extends HttpServlet implements UserPhoneUtil, Co
         userService = (UserService) injector.getInstance(UserService.class);
     }
 
-    public UserAccountServlet(UserService userService) {
+    protected UserAccountServlet(UserService userService) {
         this.userService = userService;
     }
 

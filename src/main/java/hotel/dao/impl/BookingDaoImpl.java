@@ -177,12 +177,12 @@ public class BookingDaoImpl implements BookingDao, Constant {
 
     @Override
     public BookingDto getBookingDtoById(Long bookingId) throws DataProcessingException {
-        String query = "SELECT b.id AS id, date, hr.number AS number, ac.name AS class_name, "
+        String query = "SELECT b.id AS id, date, hr.number AS number, hrc.name AS class_name, "
                 + "check_in, check_out, b.number_of_guests AS number_of_guests, "
-                + "total_price, payment_status, customer_id "
+                + "total_price, payment_status, u.email AS email "
                 + "FROM booking b "
                 + "JOIN hotel_rooms hr ON hr.id = b.hotel_room_id "
-                + "JOIN hotel_room_classes ac on ac.id = hr.hotel_room_class_id "
+                + "JOIN hotel_room_classes hrc on hrc.id = hr.hotel_room_class_id "
                 + "JOIN users u ON customer_id = u.id "
                 + "WHERE b.id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -194,8 +194,12 @@ public class BookingDaoImpl implements BookingDao, Constant {
             if (resultSet.next()) {
                 bookingDto = parseBookingDtoFromResultSet(resultSet);
             }
+            logger.info("Request to the database to get a booking DTO by id "
+                    + bookingId + " was successful");
             return bookingDto;
         } catch (SQLException e) {
+            logger.warn("Request to the database to get a booking DTO by id "
+                    + bookingId + " failed " + e);
             throw new DataProcessingException("Couldn't get a booking from DB by id: " + bookingId,
                     e);
         }
@@ -206,7 +210,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
             throws DataProcessingException {
         String query = "SELECT SUM(s.price) AS total "
                 + "FROM schedules s "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             setScheduleParameterToStatement(preparedStatement, hotelRoomId, fromDate, toDate);
@@ -215,8 +219,14 @@ public class BookingDaoImpl implements BookingDao, Constant {
             if (resultSet.next()) {
                 total = resultSet.getBigDecimal("total");
             }
+            logger.info("Request to the database to get a total price for room with id "
+                    + hotelRoomId + " and date from " + fromDate + " to " + toDate
+                    + " was successful");
             return total;
         } catch (SQLException e) {
+            logger.info("Request to the database to get a total price for room with id "
+                    + hotelRoomId + " and date from " + fromDate + " to " + toDate
+                    + " failed " + e);
             throw new DataProcessingException("Couldn't get a total sum from DB.",
                     e);
         }
@@ -236,8 +246,12 @@ public class BookingDaoImpl implements BookingDao, Constant {
             if (resultSet.next()) {
                 return resultSet.getInt(COLUMN_NAME_NUMBER_OF_BOOKING);
             }
+            logger.info("Request to the database to get number of booking by Payment status "
+                    + paymentStatus + " was successful");
             return 0;
         } catch (SQLException e) {
+            logger.warn("Request to the database to get number of booking by Payment status "
+                    + paymentStatus + " failed " + e);
             throw new DataProcessingException("Couldn't count booking ", e);
         }
     }
@@ -259,17 +273,45 @@ public class BookingDaoImpl implements BookingDao, Constant {
             if (resultSet.next()) {
                 return resultSet.getInt(COLUMN_NAME_NUMBER_OF_BOOKING);
             }
+            logger.info("Request to the database to get number of booking by Payment status "
+                    + paymentStatus + " and customer id " + customerId + " was successful");
             return 0;
         } catch (SQLException e) {
+            logger.info("Request to the database to get number of booking by Payment status "
+                    + paymentStatus + " and customer id " + customerId + " failed " + e);
             throw new DataProcessingException("Couldn't count booking for user with id "
                     + customerId, e);
         }
     }
 
     @Override
+    public long getCustomerIdByBookingId(long bookingId) throws DataProcessingException {
+        String query = "SELECT customer_id FROM booking WHERE id = ?";
+        try (Connection connection = ConnectionUtil.getConnection();
+                 PreparedStatement preparedStatement =
+                         connection.prepareStatement(query)) {
+            preparedStatement.setLong(1, bookingId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            long customerId = 0;
+            if (resultSet.next()) {
+                customerId = resultSet.getObject(COLUMN_NAME_CUSTOMER_ID,
+                        Long.class);
+            }
+            logger.info("Request to the database to get customer id by booking id "
+                    + bookingId + " was successful");
+            return customerId;
+        } catch (SQLException e) {
+            logger.warn("Request to the database to get customer id by booking id "
+                    + bookingId + " failed " + e);
+            throw new DataProcessingException("Couldn't get customer id by booking id: "
+                    + bookingId, e);
+        }
+    }
+
+    @Override
     public Booking createBooking(Booking booking) throws DataProcessingException {
         String querySchedule = "UPDATE schedules SET booking_status = 'OFFER' "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         String queryBooking = "INSERT INTO booking "
                 + "(date, hotel_room_id, check_in, check_out, number_of_guests, "
                 + "total_price, customer_id, manager_id, payment_status) "
@@ -291,8 +333,12 @@ public class BookingDaoImpl implements BookingDao, Constant {
                 booking.setId(resultSet.getObject(1, Long.class));
             }
             connection.commit();
+            logger.info("Request to the database to create booking "
+                    + booking + " was successful");
             return booking;
         } catch (SQLException e) {
+            logger.info("Request to the database to create booking "
+                    + booking + " failed");
             try {
                 connection.rollback();
                 throw new DataProcessingException("Couldn't create booking " + booking, e);
@@ -304,8 +350,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
                 connection.setAutoCommit(true);
                 connection.close();
             } catch (SQLException e) {
-                logger.warn("Couldn't set auto commit " + booking, e);
-                throw new DataProcessingException("Couldn't set auto commit " + booking, e);
+                logger.warn("Connection was not closed " + e);
             }
         }
     }
@@ -316,7 +361,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
         String queryBookingRequest = "UPDATE booking_requests SET is_processed = true "
                 + "WHERE id = ?";
         String querySchedule = "UPDATE schedules SET booking_status = 'OFFER' "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         String queryBooking = "INSERT INTO booking "
                 + "(date, hotel_room_id, check_in, check_out, number_of_guests, "
                 + "total_price, customer_id, manager_id, payment_status) "
@@ -342,8 +387,12 @@ public class BookingDaoImpl implements BookingDao, Constant {
                 booking.setId(resultSet.getObject(1, Long.class));
             }
             connection.commit();
+            logger.info("Request to the database to create booking "
+                    + booking + " by request with id " + bookingRequestId + " was successful");
             return booking;
         } catch (SQLException e) {
+            logger.info("Request to the database to create booking "
+                    + booking + " by request with id " + bookingRequestId + " failed " + e);
             try {
                 connection.rollback();
                 throw new DataProcessingException("Couldn't create booking " + booking, e);
@@ -355,7 +404,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
                 connection.setAutoCommit(true);
                 connection.close();
             } catch (SQLException e) {
-                throw new DataProcessingException("Couldn't set auto commit " + booking, e);
+                logger.warn("Connection was not closed " + e);
             }
         }
     }
@@ -370,7 +419,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
         }
         String queryBooking = "UPDATE booking SET payment_status = ? " + date + " WHERE id = ?";
         String querySchedule = "UPDATE schedules SET booking_status = ? "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         Connection connection = ConnectionUtil.getConnection();
         try (PreparedStatement statementBooking =
                          connection.prepareStatement(queryBooking);
@@ -390,7 +439,11 @@ public class BookingDaoImpl implements BookingDao, Constant {
             statementSchedule.setDate(3, Date.valueOf(booking.getCheckin()));
             statementSchedule.setDate(4, Date.valueOf(booking.getCheckout()));
             statementSchedule.execute();
+            logger.info("Request to the database to update booking "
+                    + booking + " was successful");
         } catch (SQLException e) {
+            logger.info("Request to the database to update booking "
+                    + booking + " failed " + e);
             try {
                 connection.rollback();
                 throw new DataProcessingException("Couldn't update booking with id "
@@ -403,7 +456,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
                 connection.setAutoCommit(true);
                 connection.close();
             } catch (SQLException e) {
-                throw new DataProcessingException("Couldn't set auto commit " + booking, e);
+                logger.warn("Connection was not closed " + e);
             }
         }
     }
@@ -411,7 +464,7 @@ public class BookingDaoImpl implements BookingDao, Constant {
     @Override
     public int deleteBooking(Booking booking) throws DataProcessingException {
         String querySchedule = "UPDATE schedules SET booking_status = 'FREE' "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         String queryBooking = "UPDATE booking SET payment_status = 'DELETE'"
                 + "WHERE id = ?";
         Connection connection = ConnectionUtil.getConnection();
@@ -435,16 +488,16 @@ public class BookingDaoImpl implements BookingDao, Constant {
                     + booking + " failed " + e);
             try {
                 connection.rollback();
+                throw new DataProcessingException("Couldn't create booking " + booking, e);
             } catch (SQLException ex) {
                 throw new DataProcessingException("Couldn't rollback transaction " + booking, ex);
             }
-            throw new DataProcessingException("Couldn't create booking " + booking, e);
         } finally {
             try {
                 connection.setAutoCommit(true);
                 connection.close();
             } catch (SQLException e) {
-                throw new DataProcessingException("Couldn't set auto commit " + booking, e);
+                logger.warn("Connection was not closed " + e);
             }
         }
     }

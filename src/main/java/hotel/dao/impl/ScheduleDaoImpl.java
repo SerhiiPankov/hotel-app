@@ -22,7 +22,7 @@ import java.util.List;
 public class ScheduleDaoImpl implements ScheduleDao, Constant {
     @Override
     public Schedule add(Schedule schedule) throws DataProcessingException {
-        String query = "INSERT INTO schedules (hotel_room_id, day, price, booking_status) "
+        String query = "INSERT INTO schedules (hotel_room_id, day_schedule, price, booking_status) "
                 + "VALUES (?, ?, ?, ?)";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement =
@@ -43,7 +43,7 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
     public Schedule update(Schedule schedule) throws DataProcessingException {
         String query = "UPDATE schedules "
                 + "SET price = ?, booking_status = ? "
-                + "WHERE hotel_room_id = ? AND day = ?";
+                + "WHERE hotel_room_id = ? AND day_schedule = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement =
                          connection.prepareStatement(query)) {
@@ -63,7 +63,7 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
     public int deleteExpiredSchedule(LocalDate date) throws DataProcessingException {
         String query = "UPDATE schedules "
                 + "SET booking_status = 'UNAVAILABLE' "
-                + "WHERE booking_status = 'FREE' AND day < ?";
+                + "WHERE booking_status = 'FREE' AND day_schedule < ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement =
                          connection.prepareStatement(query)) {
@@ -78,7 +78,7 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
     public List<ScheduleDto> getAllByHotelRoomIdAndDateInterval(
             long hotelRoomId, LocalDate fromDate, LocalDate toDate) throws DataProcessingException {
         String query = "SELECT * FROM schedules "
-                + "WHERE hotel_room_id = ? AND day BETWEEN ? AND ?";
+                + "WHERE hotel_room_id = ? AND day_schedule BETWEEN ? AND ?";
         List<ScheduleDto> schedules = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement =
@@ -101,7 +101,7 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
         String query = "SELECT COUNT(*) AS free_days FROM schedules "
                 + "WHERE hotel_room_id = ? "
                 + "AND booking_status = 'FREE' "
-                + "AND day BETWEEN ? AND ?";
+                + "AND day_schedule BETWEEN ? AND ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement preparedStatement =
                          connection.prepareStatement(query)) {
@@ -122,7 +122,7 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
     public SchedulesDto getAllByHotelRoomId(long hotelRoomId, int startRecord, int recordsPerPage)
             throws DataProcessingException {
         String query = "SELECT SQL_CALC_FOUND_ROWS * FROM schedules "
-                + "WHERE hotel_room_id = ? AND day >= ? ORDER BY day LIMIT ?, ?";
+                + "WHERE hotel_room_id = ? AND day_schedule >= ? ORDER BY day_schedule LIMIT ?, ?";
         String queryCount = "SELECT FOUND_ROWS()";
         List<ScheduleDto> schedules = new ArrayList<>();
         int numberOfRecords = 0;

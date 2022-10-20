@@ -36,37 +36,37 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
             if (resultSet.next()) {
                 hotelRoomClass.setId(resultSet.getObject(1, Long.class));
             }
-            logger.info("Request to the database to create an apartment class " + hotelRoomClass
+            logger.info("Request to the database to create room class " + hotelRoomClass
                     + " was successful");
             return hotelRoomClass;
         } catch (SQLException e) {
-            logger.warn("Request to the database to create an apartment class" + hotelRoomClass
+            logger.warn("Request to the database to create room class" + hotelRoomClass
                     + " failed " + e);
-            throw new DataProcessingException("Couldn't create hotel roo class "
+            throw new DataProcessingException("Couldn't create room class "
                     + hotelRoomClass + ". ", e);
         }
     }
 
     @Override
-    public Optional<HotelRoomClass> get(Long apartmentClassId) throws DataProcessingException {
+    public Optional<HotelRoomClass> get(Long roomClassId) throws DataProcessingException {
         String query = "SELECT * FROM hotel_room_classes WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
                          connection.prepareStatement(query)) {
-            statement.setLong(1, apartmentClassId);
+            statement.setLong(1, roomClassId);
             ResultSet resultSet = statement.executeQuery();
             HotelRoomClass hotelRoomClass = null;
             if (resultSet.next()) {
-                hotelRoomClass = parseApartmentClassFromResultSet(resultSet);
+                hotelRoomClass = parseRoomClassFromResultSet(resultSet);
             }
-            logger.info("Request to the database to get an apartment class by id "
-                    + apartmentClassId + " was successful");
+            logger.info("Request to the database to get room class by id "
+                    + roomClassId + " was successful");
             return Optional.ofNullable(hotelRoomClass);
         } catch (SQLException e) {
-            logger.warn("Request to the database to get an apartment class by id "
-                    + apartmentClassId + " failed " + e);
-            throw new DataProcessingException("Couldn't get an apartment class by id "
-                    + apartmentClassId, e);
+            logger.warn("Request to the database to get room class by id "
+                    + roomClassId + " failed " + e);
+            throw new DataProcessingException("Couldn't get room class by id "
+                    + roomClassId, e);
         }
     }
 
@@ -79,15 +79,15 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
                          connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                hotelRoomClasses.add(parseApartmentClassFromResultSet(resultSet));
+                hotelRoomClasses.add(parseRoomClassFromResultSet(resultSet));
             }
-            logger.info("Request to the database to get a list of all apartment classes"
+            logger.info("Request to the database to get list of all room classes"
                     + " was successful");
             return hotelRoomClasses;
         } catch (SQLException e) {
-            logger.warn("Request to the database to get a list of all apartment classes"
+            logger.warn("Request to the database to get list of all room classes"
                     + " failed " + e);
-            throw new DataProcessingException("Couldn't get a list of all apartment class from DB.",
+            throw new DataProcessingException("Couldn't get list of all room class from DB.",
                     e);
         }
     }
@@ -101,15 +101,15 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
                          connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                hotelRoomClasses.add(parseApartmentClassFromResultSet(resultSet));
+                hotelRoomClasses.add(parseRoomClassFromResultSet(resultSet));
             }
-            logger.info("Request to the database to get a list of all without deleted"
-                    + " apartment classes was successful");
+            logger.info("Request to the database to get list of all without deleted"
+                    + " room classes was successful");
             return hotelRoomClasses;
         } catch (SQLException e) {
-            logger.warn("Request to the database to get a list of all without deleted"
-                    + " apartment classes failed " + e);
-            throw new DataProcessingException("Couldn't get a list of apartment class from DB.",
+            logger.warn("Request to the database to get list of all without deleted"
+                    + " room classes failed " + e);
+            throw new DataProcessingException("Couldn't get list of room class from DB.",
                     e);
         }
     }
@@ -126,11 +126,11 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
             statement.setString(2, hotelRoomClass.getDescription());
             statement.setLong(3, hotelRoomClass.getId());
             statement.executeUpdate();
-            logger.info("Request to the database to update an apartment class " + hotelRoomClass
+            logger.info("Request to the database to update room class " + hotelRoomClass
                     + " was successful");
             return hotelRoomClass;
         } catch (SQLException e) {
-            logger.warn("Request to the database to update an apartment class" + hotelRoomClass
+            logger.warn("Request to the database to update room class" + hotelRoomClass
                     + " failed " + e);
             throw new DataProcessingException("Couldn't update "
                     + hotelRoomClass + " in DB.", e);
@@ -138,21 +138,21 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
     }
 
     @Override
-    public boolean delete(Long apartmentClassId) throws DataProcessingException {
+    public boolean delete(Long roomClassId) throws DataProcessingException {
         String query = "UPDATE hotel_room_classes SET is_deleted = TRUE WHERE id = ?";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement statement =
                          connection.prepareStatement(query)) {
-            statement.setLong(1, apartmentClassId);
+            statement.setLong(1, roomClassId);
             boolean result = statement.executeUpdate() > 0;
-            logger.info("Request to the database to delete an apartment class with id "
-                    + apartmentClassId + " was successful");
+            logger.info("Request to the database to delete room class with id "
+                    + roomClassId + " was successful");
             return result;
         } catch (SQLException e) {
-            logger.warn("Request to the database to delete an apartment class by id "
-                    + apartmentClassId + " failed " + e);
-            throw new DataProcessingException("Couldn't delete apartment class with id "
-                    + apartmentClassId, e);
+            logger.warn("Request to the database to delete room class by id "
+                    + roomClassId + " failed " + e);
+            throw new DataProcessingException("Couldn't delete room class with id "
+                    + roomClassId, e);
         }
     }
 
@@ -166,19 +166,19 @@ public class HotelRoomClassDaoImpl implements HotelRoomClassDao, Constant {
             ResultSet resultSet = statement.executeQuery();
             HotelRoomClass hotelRoomClass = null;
             if (resultSet.next()) {
-                hotelRoomClass = parseApartmentClassFromResultSet(resultSet);
+                hotelRoomClass = parseRoomClassFromResultSet(resultSet);
             }
-            logger.info("Request to the database to get an apartment class by name "
+            logger.info("Request to the database to get room class by name "
                     + name + " was successful");
             return Optional.ofNullable(hotelRoomClass);
         } catch (SQLException e) {
-            logger.warn("Request to the database to get an apartment class by name "
+            logger.warn("Request to the database to get room class by name "
                     + name + " failed " + e);
-            throw new DataProcessingException("Couldn't get apartment class by name " + name, e);
+            throw new DataProcessingException("Couldn't get room by name " + name, e);
         }
     }
 
-    private HotelRoomClass parseApartmentClassFromResultSet(ResultSet resultSet)
+    private HotelRoomClass parseRoomClassFromResultSet(ResultSet resultSet)
             throws SQLException {
         HotelRoomClass hotelRoomClass = new HotelRoomClass();
         hotelRoomClass.setId(resultSet.getObject(COLUMN_NAME_ID, Long.class));

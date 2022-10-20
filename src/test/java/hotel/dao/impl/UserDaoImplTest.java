@@ -82,7 +82,7 @@ class UserDaoImplTest {
         Connection connection = mock(Connection.class);
         when(connection.prepareStatement(query))
                 .thenReturn(statement);
-        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getMockConnectionUtil();
+        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getConnectionUtil();
         utilities.when(ConnectionUtil::getConnection)
                 .thenReturn(connection);
         List<User> expected= List.of(bob, alice);
@@ -96,7 +96,7 @@ class UserDaoImplTest {
         Connection connection = mock(Connection.class);
         when(connection.prepareStatement(query))
                 .thenThrow(new SQLException());
-        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getMockConnectionUtil();
+        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getConnectionUtil();
         utilities.when(ConnectionUtil::getConnection)
                 .thenReturn(connection);
         Assertions.assertThrows(DataProcessingException.class,
@@ -132,7 +132,7 @@ class UserDaoImplTest {
         Connection connection = mock(Connection.class);
         when(connection.prepareStatement(query))
                 .thenReturn(statement);
-        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getMockConnectionUtil();
+        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getConnectionUtil();
         utilities.when(ConnectionUtil::getConnection)
                 .thenReturn(connection);
         User actual = userDao.get(1L).get();
@@ -145,7 +145,7 @@ class UserDaoImplTest {
         Connection connection = mock(Connection.class);
         when(connection.prepareStatement(query))
                 .thenThrow(new SQLException());
-        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getMockConnectionUtil();
+        MockedStatic<ConnectionUtil> utilities = TestConnectionUtil.getConnectionUtil();
         utilities.when(ConnectionUtil::getConnection)
                 .thenReturn(connection);
         Assertions.assertThrows(DataProcessingException.class,

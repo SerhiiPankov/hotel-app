@@ -3,6 +3,7 @@ package hotel.model;
 import hotel.model.enums.BookingStatus;
 import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
 public class HotelRoom {
     private long id;
@@ -66,5 +67,22 @@ public class HotelRoom {
                 + "number='" + number + '\''
                 + ", numberOfGuests=" + numberOfGuests
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HotelRoom hotelRoom = (HotelRoom) o;
+        return id == hotelRoom.id && Objects.equals(number, hotelRoom.number);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number);
     }
 }

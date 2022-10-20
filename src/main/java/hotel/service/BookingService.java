@@ -1,5 +1,6 @@
 package hotel.service;
 
+import hotel.dto.BookingDto;
 import hotel.dto.list.BookingsDto;
 import hotel.exception.DataProcessingException;
 import hotel.model.Booking;
@@ -21,6 +22,8 @@ public interface BookingService {
 
     Booking getById(Long bookingId) throws DataProcessingException;
 
+    BookingDto getBookingDtoById(long bookingId) throws DataProcessingException;
+
     BigDecimal getTotalPrice(Long apartmentId, LocalDate fromDate, LocalDate toDate)
             throws DataProcessingException;
 
@@ -28,6 +31,8 @@ public interface BookingService {
             throws DataProcessingException;
 
     int getNumberOfBooking(PaymentStatus paymentStatus) throws DataProcessingException;
+
+    long getCustomerIdByBookingId(long bookingId) throws DataProcessingException;
 
     Booking createBooking(Booking booking) throws DataProcessingException;
 

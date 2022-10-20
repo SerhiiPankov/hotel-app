@@ -16,7 +16,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public void refreshCurrencies(List<Currency> currencies) throws DataProcessingException {
         for (Currency currency: currencies) {
-            if (currencyDao.isPresentCurrency(currency)) {
+            if (currencyDao.isPresenceCurrency(currency)) {
                 currencyDao.refreshCurrencies(currency);
             } else {
                 currencyDao.addCurrency(currency);

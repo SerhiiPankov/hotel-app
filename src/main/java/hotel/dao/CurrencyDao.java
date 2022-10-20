@@ -7,7 +7,7 @@ import java.util.List;
 public interface CurrencyDao {
     void addCurrency(Currency currency) throws DataProcessingException;
 
-    boolean isPresentCurrency(Currency currency) throws DataProcessingException;
+    boolean isPresenceCurrency(Currency currency) throws DataProcessingException;
 
     void refreshCurrencies(Currency currency) throws DataProcessingException;
 

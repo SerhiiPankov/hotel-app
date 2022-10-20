@@ -1,6 +1,7 @@
 package hotel.service.impl;
 
 import hotel.dao.BookingDao;
+import hotel.dto.BookingDto;
 import hotel.dto.list.BookingsDto;
 import hotel.exception.DataProcessingException;
 import hotel.lib.Inject;
@@ -45,6 +46,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDto getBookingDtoById(long bookingId) throws DataProcessingException {
+        return bookingDao.getBookingDtoById(bookingId);
+    }
+
+    @Override
     public BigDecimal getTotalPrice(Long apartmentId, LocalDate fromDate, LocalDate toDate)
             throws DataProcessingException {
         return bookingDao.getTotalPrice(apartmentId, fromDate, toDate);
@@ -59,6 +65,11 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public int getNumberOfBooking(PaymentStatus paymentStatus) throws DataProcessingException {
         return bookingDao.getNumberOfBooking(paymentStatus);
+    }
+
+    @Override
+    public long getCustomerIdByBookingId(long bookingId) throws DataProcessingException {
+        return bookingDao.getCustomerIdByBookingId(bookingId);
     }
 
     @Override

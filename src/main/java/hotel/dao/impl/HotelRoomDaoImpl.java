@@ -20,9 +20,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Dao
 public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
+    private static final Logger logger = LogManager.getLogger(HotelRoomDaoImpl.class);
+
     @Override
     public HotelRoom create(HotelRoom hotelRoom) throws DataProcessingException {
         String query = "INSERT INTO hotel_rooms "
@@ -37,8 +41,12 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             if (resultSet.next()) {
                 hotelRoom.setId(resultSet.getObject(1, Long.class));
             }
+            logger.info("Request to the database to create room " + hotelRoom
+                    + " was successful");
             return hotelRoom;
         } catch (SQLException e) {
+            logger.warn("Request to the database to create room " + hotelRoom
+                    + " failed " + e);
             throw new DataProcessingException("Couldn't create "
                     + hotelRoom + ". ", e);
         }
@@ -55,9 +63,13 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             if (resultSet.next()) {
                 hotelRoom = parseHotelRoomFromResultSet(resultSet);
             }
+            logger.info("Request to the database to get room by id "
+                    + hotelRoomId + " was successful");
             return Optional.ofNullable(hotelRoom);
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't get hotel room by id "
+            logger.warn("Request to the database to get room by id "
+                    + hotelRoomId + " failed " + e);
+            throw new DataProcessingException("Couldn't get room by id "
                     + hotelRoomId, e);
         }
     }
@@ -73,9 +85,13 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             while (resultSet.next()) {
                 hotelRooms.add(parseHotelRoomFromResultSet(resultSet));
             }
+            logger.info("Request to the database to get list of all rooms"
+                    + " was successful");
             return hotelRooms;
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't get a list of hotel room class from DB.",
+            logger.warn("Request to the database to get list of all rooms"
+                    + " failed " + e);
+            throw new DataProcessingException("Couldn't get list of all rooms from DB.",
                     e);
         }
     }
@@ -94,9 +110,13 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             while (resultSet.next()) {
                 hotelRooms.add(parseHotelRoomDtoFromResultSet(resultSet));
             }
+            logger.info("Request to the database to get list of all without deleted"
+                    + " rooms was successful");
             return hotelRooms;
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't get a list of hotel room class from DB.",
+            logger.warn("Request to the database to get list of all without deleted"
+                    + " rooms failed " + e);
+            throw new DataProcessingException("Couldn't get list of rooms from DB.",
                     e);
         }
     }
@@ -113,8 +133,12 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             setHotelRoomParameterToStatement(statement, hotelRoom);
             statement.setLong(5, hotelRoom.getId());
             statement.executeUpdate();
+            logger.info("Request to the database to update a room " + hotelRoom
+                    + " was successful");
             return hotelRoom;
         } catch (SQLException e) {
+            logger.warn("Request to the database to update room " + hotelRoom
+                    + " failed " + e);
             throw new DataProcessingException("Couldn't update "
                     + hotelRoom + " in DB.", e);
         }
@@ -127,9 +151,14 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
                  PreparedStatement statement =
                          connection.prepareStatement(query)) {
             statement.setLong(1, hotelRoomId);
-            return statement.executeUpdate() > 0;
+            boolean result = statement.executeUpdate() > 0;
+            logger.info("Request to the database to delete room with id "
+                    + hotelRoomId + " was successful");
+            return result;
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't delete hotel room with id "
+            logger.warn("Request to the database to delete room by id "
+                    + hotelRoomId + " failed " + e);
+            throw new DataProcessingException("Couldn't delete room with id "
                     + hotelRoomId, e);
         }
     }
@@ -147,9 +176,13 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             if (resultSet.next()) {
                 hotelRoom = parseHotelRoomFromResultSet(resultSet);
             }
+            logger.info("Request to the database to get room by number "
+                    + number + " was successful");
             return Optional.ofNullable(hotelRoom);
         } catch (SQLException e) {
-            throw new DataProcessingException("Couldn't get hotel room by number " + number, e);
+            logger.warn("Request to the database to get room by number "
+                    + number + " failed " + e);
+            throw new DataProcessingException("Couldn't get room by number " + number, e);
         }
     }
 
@@ -170,8 +203,12 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             if (resultSet.next()) {
                 hotelRoom = parseHotelRoomDtoFromResultSet(resultSet);
             }
+            logger.info("Request to the database to get room class by id "
+                    + hotelRoomId + " was successful");
             return Optional.ofNullable(hotelRoom);
         } catch (SQLException e) {
+            logger.warn("Request to the database to get room class by id "
+                    + hotelRoomId + " failed " + e);
             throw new DataProcessingException("Couldn't get hotel room by id " + hotelRoomId, e);
         }
     }
@@ -187,7 +224,7 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
                 + "JOIN hotel_room_classes hrc on hrc.id = hr.hotel_room_class_id "
                 + "JOIN schedules s on hr.id = s.hotel_room_id "
                 + "WHERE hotel_room_class_id = ? AND number_of_guests >= ? "
-                + "AND day BETWEEN ? AND ? AND s.booking_status = ?"
+                + "AND day_schedule BETWEEN ? AND ? AND s.booking_status = ?"
                 + "GROUP BY id "
                 + "HAVING count_days >= ? ";
         List<HotelRoomDto> hotelRooms = new ArrayList<>();
@@ -200,8 +237,12 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             while (resultSet.next()) {
                 hotelRooms.add(parseHotelRoomDtoFromResultSet(resultSet));
             }
+            logger.info("Request to the database to get list of"
+                    + " rooms by date, number of guests and room class was successful");
             return hotelRooms;
         } catch (SQLException e) {
+            logger.info("Request to the database to get list of"
+                    + " rooms by date, number of guests and room class failed");
             throw new DataProcessingException("Couldn't get a list of hotel room from DB.",
                     e);
         }
@@ -219,7 +260,8 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
                 + "FROM hotel_rooms hr "
                 + "JOIN hotel_room_classes hrc on hrc.id = hr.hotel_room_class_id "
                 + "JOIN schedules s on hr.id = s.hotel_room_id "
-                + "WHERE number_of_guests >= ? AND day BETWEEN ? AND ? AND s.booking_status = ? "
+                + "WHERE number_of_guests >= ? AND day_schedule BETWEEN ? AND ? "
+                + "AND s.booking_status = ? "
                 + "GROUP BY id, number_of_guests "
                 + "HAVING count_days >= ? "
                 + "ORDER BY " + sort + " "
@@ -252,8 +294,14 @@ public class HotelRoomDaoImpl implements HotelRoomDao, Constant {
             roomsDto.setRooms(rooms);
             roomsDto.setNumberOfRooms(numberOfRecords);
             connection.setAutoCommit(true);
+            logger.info("Request to the database to get list of"
+                    + " rooms by date range and booking status from "
+                    + startRecord + " record was successful");
             return roomsDto;
         } catch (SQLException e) {
+            logger.info("Request to the database to get list of"
+                    + " rooms by date range and booking status from "
+                    + startRecord + " record failed");
             throw new DataProcessingException("Couldn't get a list of hotel room from DB.",
                     e);
         }

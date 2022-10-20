@@ -2,10 +2,10 @@ package hotel.web.servlet.booking.customer;
 
 import static hotel.util.Constant.MAPPING_DOWNLOAD;
 
+import hotel.dto.BookingDto;
 import hotel.exception.DataProcessingException;
 import hotel.exception.WrongDataException;
 import hotel.lib.Injector;
-import hotel.model.Booking;
 import hotel.service.BookingService;
 import hotel.service.UserService;
 import hotel.util.Constant;
@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,32 +51,39 @@ public class InvoicePdfServlet extends HttpServlet implements Constant {
                     + PARAMETER_MESSAGE + "=" + NO_PARAMETER_ERROR_MSG);
             return;
         }
-        Booking booking;
+        long customerId;
+        BookingDto bookingDto;
         try {
-            booking = bookingService.getById(bookingId);
-            if (userId != booking.getCustomerId()) {
+            customerId = bookingService.getCustomerIdByBookingId(bookingId);
+            if (userId != customerId) {
                 logger.warn("Referencing a page " + MAPPING_DOWNLOAD
                                 + " with wrong parameters");
                 resp.sendRedirect(req.getContextPath() + MAPPING_ERROR_PAGE + "?"
                         + PARAMETER_MESSAGE + "=" + WRONG_PARAMETER_ERROR_MSG);
                 return;
             }
+            bookingDto = bookingService.getBookingDtoById(bookingId);
         } catch (DataProcessingException e) {
             logger.warn("Can not get booking with id " + bookingId);
             resp.sendRedirect(req.getContextPath() + MAPPING_ERROR_PAGE + "?"
                     + PARAMETER_MESSAGE + "=" + ACCESS_ERROR_MSG);
             return;
         }
-        String fileName = bookingId + "-" + booking.getDate() + FILE_NAME;
+        String fileName = bookingId + "-" + bookingDto.getDate() + FILE_NAME;
         resp.setContentType(CONTENT_TYPE_PDF);
         resp.setHeader(HEADER_CONTENT_DISPOSITION, HEADER_ATTACHMENT_FILENAME + fileName);
         try {
-            File file = new File(req.getContextPath() + fileName);
+            String pathName = req.getContextPath() + fileName;
+            File file = new File(pathName);
             PdfFileUtil pdfFileUtil = new PdfFileUtil();
-            pdfFileUtil.createPdfFile(req, booking, fileName);
+            ResourceBundle resourceBundle = ResourceBundle.getBundle(SESSION_ATTRIBUTE_LANGUAGE,
+                    Locale.forLanguageTag(
+                            (String) req.getSession().getAttribute(SESSION_ATTRIBUTE_LANGUAGE)));
+            pdfFileUtil.createPdfFile(resourceBundle, pathName, bookingDto);
             sendFile(resp, file);
-            EmailUtil.sendInvoiceEmail(file, req, booking,userService.get(userId));
+            EmailUtil.sendInvoiceEmail(file, req,userService.get(userId));
             file.delete();
+            logger.info("Invoice was loaded: " + fileName);
         } catch (IOException | MessagingException
                  | DataProcessingException | WrongDataException e) {
             logger.warn("Load invoice failed " + e);

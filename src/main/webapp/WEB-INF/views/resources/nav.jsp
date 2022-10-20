@@ -2,6 +2,8 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="dt" uri="/new-tag-library" %>
+
 <c:set var="language" value="${not empty param.language ? param.language : not empty sessionScope.language ? sessionScope.language : pageContext.request.locale}" scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="language"/>
@@ -17,14 +19,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
     </script>
-
-
 </head>
 
 <body>
     <div class="container-xl">
         <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid a">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="${pageContext.request.contextPath}/">
                     <fmt:message key="navbar.main.title"/>
                 </a>
@@ -140,10 +140,6 @@
                     <%}%>
 
                     <form>
-<%--                        <input type="hidden"--%>
-<%--                               name="csrfSalt"--%>
-<%--                               value="<c:out value='${csrfSalt}'/>"/>--%>
-
                         <label for="language">
                             <select class="form-select form-select-sm"
                                     id="language"
@@ -181,6 +177,10 @@
                             </ul>
                         </div>
                     <%}%>
+
+                    <div class="nav-link">
+                        <dt:dateTimeTag/>
+                    </div>
                 </div>
             </div>
         </nav>

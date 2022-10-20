@@ -11,9 +11,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Dao
 public class CurrencyDaoImpl implements CurrencyDao {
+    private static final Logger logger = LogManager.getLogger(CurrencyDaoImpl.class);
+
     @Override
     public void addCurrency(Currency currency) throws DataProcessingException {
         String query = "INSERT INTO currencies "
@@ -27,14 +31,18 @@ public class CurrencyDaoImpl implements CurrencyDao {
             statement.setBigDecimal(4, currency.getRateBuy());
             statement.setBigDecimal(5, currency.getRateSell());
             statement.executeUpdate();
+            logger.info("Request to the database to add currency " + currency
+                    + " was successful");
         } catch (SQLException e) {
+            logger.info("Request to the database to add currency " + currency
+                    + " failed");
             throw new DataProcessingException("Couldn't add currency "
                     + currency + ". ", e);
         }
     }
 
     @Override
-    public boolean isPresentCurrency(Currency currency) throws DataProcessingException {
+    public boolean isPresenceCurrency(Currency currency) throws DataProcessingException {
         String query = "SELECT EXISTS (SELECT * FROM currencies "
                 + "WHERE currency_code_a = ? AND currency_code_b = ?)";
         try (Connection connection = ConnectionUtil.getConnection();
@@ -43,10 +51,16 @@ public class CurrencyDaoImpl implements CurrencyDao {
             statement.setInt(2,currency.getCurrencyCodeB());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
+                logger.info("Request to the database to check currency " + currency
+                        + " was successful - present");
                 return resultSet.getBoolean(1);
             }
+            logger.info("Request to the database to check currency " + currency
+                    + " was successful - not present");
             return false;
         } catch (SQLException e) {
+            logger.info("Request to the database to check currency " + currency
+                    + " failed");
             throw new DataProcessingException("Couldn't add currency "
                     + currency + ". ", e);
         }
@@ -64,7 +78,11 @@ public class CurrencyDaoImpl implements CurrencyDao {
             statement.setInt(4,currency.getCurrencyCodeA());
             statement.setInt(5,currency.getCurrencyCodeB());
             statement.executeUpdate();
+            logger.info("Request to the database to refresh currency " + currency
+                    + " was successful");
         } catch (SQLException e) {
+            logger.info("Request to the database to refresh currency " + currency
+                    + " failed");
             throw new DataProcessingException("Couldn't refresh currency "
                     + currency + ". ", e);
         }
@@ -80,6 +98,8 @@ public class CurrencyDaoImpl implements CurrencyDao {
             while (resultSet.next()) {
                 currencies.add(parseCurrencyFromResultSet(resultSet));
             }
+            logger.info("Request to the database to get list of all currency "
+                    + " was successful");
             return currencies;
         } catch (SQLException e) {
             throw new DataProcessingException("Couldn't get list of currencies ", e);

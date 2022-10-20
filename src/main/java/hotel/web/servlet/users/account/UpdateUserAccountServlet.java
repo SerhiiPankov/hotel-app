@@ -41,7 +41,7 @@ public class UpdateUserAccountServlet extends HttpServlet
                 .getInstance(UserService.class);
     }
 
-    public UpdateUserAccountServlet(AuthenticationService authenticationService,
+    protected UpdateUserAccountServlet(AuthenticationService authenticationService,
                                     UserService userService) {
         this.authenticationService = authenticationService;
         this.userService = userService;

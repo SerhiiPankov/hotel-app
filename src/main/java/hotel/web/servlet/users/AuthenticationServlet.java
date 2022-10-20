@@ -37,7 +37,7 @@ public class AuthenticationServlet extends HttpServlet implements UserPhoneUtil,
                 .getInstance(AuthenticationService.class);
     }
 
-    public AuthenticationServlet(AuthenticationService authenticationService) {
+    protected AuthenticationServlet(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 

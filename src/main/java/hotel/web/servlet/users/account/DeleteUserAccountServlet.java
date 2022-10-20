@@ -38,7 +38,7 @@ public class DeleteUserAccountServlet extends HttpServlet
                 .getInstance(AuthenticationService.class);
     }
 
-    public DeleteUserAccountServlet(UserService userService,
+    protected DeleteUserAccountServlet(UserService userService,
                                     AuthenticationService authenticationService) {
         this.userService = userService;
         this.authenticationService = authenticationService;

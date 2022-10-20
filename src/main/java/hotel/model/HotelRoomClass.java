@@ -1,5 +1,7 @@
 package hotel.model;
 
+import java.util.Objects;
+
 public class HotelRoomClass {
     private long id;
     private String name;
@@ -44,5 +46,24 @@ public class HotelRoomClass {
                 + "id=" + id
                 + ", name='" + name + '\''
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HotelRoomClass that = (HotelRoomClass) o;
+        return id == that.id && isDeleted == that.isDeleted
+                && Objects.equals(name, that.name)
+                && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, isDeleted);
     }
 }

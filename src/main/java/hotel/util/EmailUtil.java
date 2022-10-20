@@ -1,7 +1,6 @@
 package hotel.util;
 
 import hotel.exception.EmailConnectionException;
-import hotel.model.Booking;
 import hotel.model.Request;
 import hotel.model.User;
 import jakarta.activation.DataHandler;
@@ -76,8 +75,7 @@ public class EmailUtil implements Constant {
     private EmailUtil(){
     }
 
-    public static void sendInvoiceEmail(File file, HttpServletRequest req,
-                                        Booking booking, User user)
+    public static void sendInvoiceEmail(File file, HttpServletRequest req, User user)
             throws MessagingException {
         ResourceBundle resourceBundle = ResourceBundle.getBundle(SESSION_ATTRIBUTE_LANGUAGE,
                 Locale.forLanguageTag(

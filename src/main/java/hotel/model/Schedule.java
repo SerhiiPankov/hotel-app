@@ -3,6 +3,7 @@ package hotel.model;
 import hotel.model.enums.BookingStatus;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Schedule {
     private long hotelRoomId;
@@ -50,5 +51,25 @@ public class Schedule {
                 + ", price=" + price
                 + ", bookingStatus=" + bookingStatus
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Schedule schedule = (Schedule) o;
+        return hotelRoomId == schedule.hotelRoomId
+                && Objects.equals(day, schedule.day)
+                && Objects.equals(price, schedule.price)
+                && bookingStatus == schedule.bookingStatus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hotelRoomId, day, price, bookingStatus);
     }
 }

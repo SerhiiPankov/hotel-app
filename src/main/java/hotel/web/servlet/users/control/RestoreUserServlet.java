@@ -33,7 +33,7 @@ public class RestoreUserServlet extends HttpServlet implements Constant {
                 .getInstance(UserService.class);
     }
 
-    public RestoreUserServlet(UserService userService) {
+    protected RestoreUserServlet(UserService userService) {
         this.userService = userService;
     }
 

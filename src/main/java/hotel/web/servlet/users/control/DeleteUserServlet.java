@@ -33,7 +33,7 @@ public class DeleteUserServlet extends HttpServlet implements Constant {
                 .getInstance(UserService.class);
     }
 
-    public DeleteUserServlet(UserService userService) {
+    protected DeleteUserServlet(UserService userService) {
         this.userService = userService;
     }
 

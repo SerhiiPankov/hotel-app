@@ -29,7 +29,7 @@ public class AuthorizationServlet extends HttpServlet implements Constant {
                 (AuthenticationService) injector.getInstance(AuthenticationService.class);
     }
 
-    public AuthorizationServlet(AuthenticationService authenticationService) {
+    protected AuthorizationServlet(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
     }
 

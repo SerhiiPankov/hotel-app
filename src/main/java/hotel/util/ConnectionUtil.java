@@ -1,5 +1,6 @@
 package hotel.util;
 
+import hotel.exception.DataProcessingException;
 import hotel.exception.DbConnectionException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,12 +41,12 @@ public class ConnectionUtil implements Constant {
     private ConnectionUtil() {
     }
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws DataProcessingException {
         try {
             return basicDataSource.getConnection();
         } catch (SQLException e) {
             logger.error("Can't get DB connection");
-            throw new DbConnectionException("Can't get DB connection", e);
+            throw new DataProcessingException("Can't get DB connection", e);
         }
     }
 }

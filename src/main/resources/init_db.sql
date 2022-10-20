@@ -75,10 +75,10 @@ CREATE TABLE `booking_requests` (
 DROP TABLE IF EXISTS `schedules`;
 CREATE TABLE `schedules` (
         `hotel_room_id` bigint(20) UNSIGNED NOT NULL,
-        `day` date NOT NULL,
+        `day_schedule` date NOT NULL,
         `price` decimal(10,2) NOT NULL,
         `booking_status` enum('FREE','BOOK','BUSY','UNAVAILABLE', 'OFFER', 'ACCEPT') NOT NULL,
-        PRIMARY KEY (`hotel_room_id`, `day`) USING BTREE,
+        PRIMARY KEY (`hotel_room_id`, `day_schedule`) USING BTREE,
         CONSTRAINT `fk_schedules_hotel_room_id` FOREIGN KEY (`hotel_room_id`) REFERENCES `hotel_rooms` (`id`)
         ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;

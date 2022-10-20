@@ -49,7 +49,7 @@ public class ManageUserServlet extends HttpServlet implements Constant, PageUtil
                 .getInstance(UserService.class);
     }
 
-    public ManageUserServlet(UserService userService) {
+    protected ManageUserServlet(UserService userService) {
         this.userService = userService;
     }
 
