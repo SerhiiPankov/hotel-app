@@ -21,6 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Servlet to get list of bookings
+ *
+ *  @author Serhii pankov
+ *  @version 1.0
+ */
 @WebServlet(MAPPING_BOOKING_ALL)
 public class ManageBookingServlet extends HttpServlet implements Constant, PageUtil {
     private static final long PARAMETER_FILTER_PAYMENT_STATUS_WAIT = 1L;
@@ -43,6 +49,18 @@ public class ManageBookingServlet extends HttpServlet implements Constant, PageU
         filterParameters.put(PARAMETER_FILTER_PAYMENT_STATUS_DELETE, PaymentStatus.DELETE);
     }
 
+    /**
+     * doGet method for Manage booking page <br>
+     *
+     * - getting Role from session <br>
+     * - getting part of the list of bookings depending on the role and pagination page <br>
+     * - set list of bookings to attribute
+     *
+     * @param req HttpServletRequest
+     * @param resp HttpServletResponse
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -63,9 +81,19 @@ public class ManageBookingServlet extends HttpServlet implements Constant, PageU
         }
     }
 
+    /**
+     * doPost method for Manage bookings page <br>
+     *
+     * - getting a parameter to filter the list of bookings <br>
+     * - setting filter attribute to session <br>
+     *
+     * @param req HttpServletRequest
+     * @param resp HttpServletResponse
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+            throws IOException {
         logger.info("POST request " + MAPPING_BOOKING_ALL);
         if (req.getParameter(PARAMETER_FILTER_BOOKING) != null
                 && !req.getParameter(PARAMETER_FILTER_BOOKING).equals("")) {
@@ -76,6 +104,15 @@ public class ManageBookingServlet extends HttpServlet implements Constant, PageU
         resp.sendRedirect(req.getContextPath() + MAPPING_BOOKING_ALL);
     }
 
+    /**
+     * Getting list of bookings by Role and actual pagination page
+     *
+     * @param req HttpServletRequest
+     * @param userRole Actual user Role (ADMIN, MANAGER, CUSTOMER)
+     * @param page int - current pagination page
+     * @return BookingsDto
+     * @throws DataProcessingException Signals a database exception
+     */
     private BookingsDto getBookingsDto(HttpServletRequest req, Role userRole, int page)
             throws DataProcessingException {
         Long sort = (Long) req.getSession()
@@ -98,6 +135,13 @@ public class ManageBookingServlet extends HttpServlet implements Constant, PageU
         return new BookingsDto();
     }
 
+    /**
+     * Setting attribute for page
+     *
+     * @param req HttpServletRequest
+     * @param bookingsDto BookingsDto
+     * @param page int
+     */
     private void setAttribute(HttpServletRequest req, BookingsDto bookingsDto, int page) {
         int numberOfPages = (int)
                 Math.ceil(bookingsDto.getNumberOfBookings() * 1.0 / BOOKING_RECORDS_PER_PAGE);

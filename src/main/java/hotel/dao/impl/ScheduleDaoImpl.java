@@ -121,9 +121,11 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
     @Override
     public SchedulesDto getAllByHotelRoomId(long hotelRoomId, int startRecord, int recordsPerPage)
             throws DataProcessingException {
-        String query = "SELECT SQL_CALC_FOUND_ROWS * FROM schedules "
+        String query = "SELECT * FROM schedules "
                 + "WHERE hotel_room_id = ? AND day_schedule >= ? ORDER BY day_schedule LIMIT ?, ?";
-        String queryCount = "SELECT FOUND_ROWS()";
+        String queryCount = "SELECT COUNT(*) AS number_of_schedule "
+                + "FROM schedules WHERE hotel_room_id = ? AND day_schedule >= ?";
+        LocalDate now = LocalDate.now();
         List<ScheduleDto> schedules = new ArrayList<>();
         int numberOfRecords = 0;
         Connection connection = ConnectionUtil.getConnection();
@@ -133,16 +135,18 @@ public class ScheduleDaoImpl implements ScheduleDao, Constant {
                          connection.prepareStatement(queryCount)) {
             connection.setAutoCommit(false);
             statement.setLong(1, hotelRoomId);
-            statement.setDate(2, Date.valueOf(LocalDate.now()));
+            statement.setDate(2, Date.valueOf(now));
             statement.setInt(3, startRecord);
             statement.setInt(4, recordsPerPage);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 schedules.add(parseScheduleFromResultSet(resultSet));
             }
+            statementCount.setLong(1, hotelRoomId);
+            statementCount.setDate(2, Date.valueOf(now));
             ResultSet resultSetCount = statementCount.executeQuery();
             if (resultSetCount.next()) {
-                numberOfRecords = resultSetCount.getInt(1);
+                numberOfRecords = resultSetCount.getInt(COLUMN_NAME_NUMBER_OF_SCHEDULE);
             }
             SchedulesDto schedulesDto = new SchedulesDto();
             schedulesDto.setSchedules(schedules);

@@ -67,9 +67,4 @@ public class Schedule {
                 && Objects.equals(price, schedule.price)
                 && bookingStatus == schedule.bookingStatus;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(hotelRoomId, day, price, bookingStatus);
-    }
 }

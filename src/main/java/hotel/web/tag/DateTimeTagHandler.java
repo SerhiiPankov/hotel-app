@@ -8,6 +8,12 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Tag for output actual date-time
+ *
+ * @author Serhii Pankov
+ * @version 1.0
+ */
 public class DateTimeTagHandler extends SimpleTagSupport {
     private static final Logger logger = LogManager.getLogger(DateTimeTagHandler.class);
     private static final DateTimeFormatter formatter =

@@ -61,9 +61,4 @@ public class HotelRoomClass {
                 && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description);
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, isDeleted);
-    }
 }

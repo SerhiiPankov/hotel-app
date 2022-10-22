@@ -221,6 +221,8 @@ public interface Constant {
     String COLUMN_NAME_IS_DELETED = "is_deleted";
     String COLUMN_NAME_HOTEL_ROOM_ID = "hotel_room_id";
     String COLUMN_NAME_DAY = "day_schedule";
+    String COLUMN_NAME_NUMBER_OF_SCHEDULE = "number_of_schedule";
+    String COLUMN_NAME_NUMBER_OF_REQUEST = "number_of_request";
     String COLUMN_NAME_PRICE = "price";
     String COLUMN_NAME_BOOKING_STATUS = "booking_status";
     String COLUMN_NAME_DATE = "date";

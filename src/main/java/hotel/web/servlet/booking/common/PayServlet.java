@@ -23,6 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Servlet to set PAID status for booking
+ *
+ *  @author Serhii pankov
+ *  @version 1.0
+ */
 @WebServlet(MAPPING_BOOKING_PAY)
 public class PayServlet extends HttpServlet implements Constant {
     private static final Logger logger = LogManager.getLogger(PayServlet.class);
@@ -33,6 +39,20 @@ public class PayServlet extends HttpServlet implements Constant {
     private final UserService userService = (UserService) injector
             .getInstance(UserService.class);
 
+    /**
+     * doPost method for set PAID status for booking <br>
+     *
+     * - request parameter validation <br>
+     * - check Role user <br>
+     * - check customer id for user with role CUSTOMER <br>
+     * - setting PAID status for booking <br>
+     * - redirect to all booking servlet <br>
+     *
+     * @param req HttpServletRequest
+     * @param resp HttpServletResponse
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {

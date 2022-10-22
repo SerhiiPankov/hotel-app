@@ -16,9 +16,10 @@ public class TestConnectionUtil implements TestConstant {
 
     static {
         basicDataSource.setUrl(CONNECTION_URL);
-        basicDataSource.setInitialSize(10);
-        basicDataSource.setMinIdle(10);
-        basicDataSource.setMaxIdle(20);
+        basicDataSource.setInitialSize(20);
+        basicDataSource.setMinIdle(20);
+        basicDataSource.setMaxIdle(40);
+        basicDataSource.setMaxOpenPreparedStatements(100);
     }
 
     private TestConnectionUtil(){

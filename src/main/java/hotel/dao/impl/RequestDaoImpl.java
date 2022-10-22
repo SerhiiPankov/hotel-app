@@ -24,8 +24,7 @@ public class RequestDaoImpl implements RequestDao, Constant {
     @Override
     public RequestsDto getAllDto(int startRecord, int recordsPerPage, boolean isProcessed)
             throws DataProcessingException {
-        String query = "SELECT SQL_CALC_FOUND_ROWS "
-                + "br.id AS id, hrc.name AS ac_name, u.email AS email, "
+        String query = "SELECT br.id AS id, hrc.name AS ac_name, u.email AS email, "
                 + "date, number_of_guests, check_in, check_out, is_processed "
                 + "FROM booking_requests br "
                 + "JOIN hotel_room_classes hrc ON hrc.id = br.hotel_room_class_id "
@@ -33,7 +32,11 @@ public class RequestDaoImpl implements RequestDao, Constant {
                 + "WHERE is_processed = ? "
                 + "ORDER BY date DESC "
                 + "LIMIT ?, ?";
-        String queryCount = "SELECT FOUND_ROWS()";
+        String queryCount = "SELECT COUNT(*) AS number_of_request "
+                + "FROM booking_requests br "
+                + "JOIN hotel_room_classes hrc ON hrc.id = br.hotel_room_class_id "
+                + "JOIN users u on u.id = br.customer_id "
+                + "WHERE is_processed = ? ";
         List<RequestDto> requests = new ArrayList<>();
         int numberOfRecords = 0;
         try (Connection connection = ConnectionUtil.getConnection();
@@ -49,9 +52,10 @@ public class RequestDaoImpl implements RequestDao, Constant {
             while (resultSet.next()) {
                 requests.add(parseBookingRequestDtoFromResultSet(resultSet));
             }
+            statementCount.setBoolean(1, isProcessed);
             ResultSet resultSetCount = statementCount.executeQuery();
             if (resultSetCount.next()) {
-                numberOfRecords = resultSetCount.getInt(1);
+                numberOfRecords = resultSetCount.getInt(COLUMN_NAME_NUMBER_OF_REQUEST);
             }
             RequestsDto requestsDto = new RequestsDto();
             requestsDto.setRequests(requests);
@@ -217,15 +221,15 @@ public class RequestDaoImpl implements RequestDao, Constant {
         }
     }
 
-    private void setBookingRequestParameterToStatement(PreparedStatement preparedStatement,
+    private void setBookingRequestParameterToStatement(PreparedStatement statement,
                                                        Request request)
             throws SQLException {
-        preparedStatement.setDate(1, Date.valueOf(request.getDate()));
-        preparedStatement.setLong(2, request.getCustomerId());
-        preparedStatement.setLong(3, request.getHotelRoomClassId());
-        preparedStatement.setInt(4, request.getNumberOfGuests());
-        preparedStatement.setDate(5, Date.valueOf(request.getCheckIn()));
-        preparedStatement.setDate(6, Date.valueOf(request.getCheckOut()));
+        statement.setDate(1, Date.valueOf(request.getDate()));
+        statement.setLong(2, request.getCustomerId());
+        statement.setLong(3, request.getHotelRoomClassId());
+        statement.setInt(4, request.getNumberOfGuests());
+        statement.setDate(5, Date.valueOf(request.getCheckIn()));
+        statement.setDate(6, Date.valueOf(request.getCheckOut()));
     }
 
     private Request parseBookingRequestFromResultSet(ResultSet resultSet)

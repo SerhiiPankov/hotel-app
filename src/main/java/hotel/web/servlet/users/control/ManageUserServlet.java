@@ -57,13 +57,13 @@ public class ManageUserServlet extends HttpServlet implements Constant, PageUtil
      * doGet method for Manage users page <br>
      *
      * - getting Role from session <br>
-     * - getting a part of the list of users depending on the role and pagination page <br>
+     * - getting part of the list of users depending on the role and pagination page <br>
      * - set list of users to attribute
      *
      * @param req HttpServletRequest
      * @param resp HttpServletResponse
      * @throws ServletException Signals a Servlet exception
-     * @throws IOException Signals an I/O exception.
+     * @throws IOException Signals an I/O exception
      */
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
