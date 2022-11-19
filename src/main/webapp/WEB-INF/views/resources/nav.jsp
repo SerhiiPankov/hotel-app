@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="dt" uri="/new-tag-library" %>
 
-<c:set var="language" value="${not empty param.language ? param.language : not empty sessionScope.language ? sessionScope.language : pageContext.request.locale}" scope="session"/>
+<c:set var="language" value="${not empty param.language ? param.language : not empty sessionScope.language ? sessionScope.language : 'en' }" scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="language"/>
 

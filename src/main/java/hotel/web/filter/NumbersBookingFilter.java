@@ -22,6 +22,12 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Filter to set number of booking and number of booking request
+ *
+ *  @author Serhii Pankov
+ *  @version 1.0
+ */
 @WebFilter(MAPPING_ALL_PAGES)
 public class NumbersBookingFilter implements Constant, HttpSessionAttributeListener, Filter {
     private static final Logger logger = LogManager.getLogger(NumbersBookingFilter.class);
@@ -39,6 +45,18 @@ public class NumbersBookingFilter implements Constant, HttpSessionAttributeListe
         this.bookingService = bookingService;
     }
 
+    /**
+     * doFilter method for NumbersBookingFilter <br>
+     *
+     * - set session attribute number of bookings
+     * - set session attribute number of requests
+     *
+     * @param servletRequest ServletRequest
+     * @param servletResponse ServletResponse
+     * @param filterChain FilterChain
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
