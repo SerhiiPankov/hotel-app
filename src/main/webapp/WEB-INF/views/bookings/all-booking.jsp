@@ -52,7 +52,7 @@
                 <c:choose>
                     <c:when test="${userRole == Role.ADMIN || userRole == Role.MANAGER}">
                         <option <c:if test="${filterBooking == 1}" >selected</c:if> value=1>
-                            <fmt:message key="booking.all.sort.label.wait"/>
+                            <fmt:message key="booking.all.sort.label.wait"/> (<span style="color: #bf8104">${numberOfBooking}</span>)
                         </option>
 
                         <option <c:if test="${filterBooking == 2}" >selected</c:if> value=2>
@@ -66,11 +66,11 @@
 
                     <c:when test="${userRole == Role.CUSTOMER}">
                         <option <c:if test="${filterBooking == 2}" >selected</c:if> value=2>
-                            <fmt:message key="booking.all.sort.label.invoice"/>
+                            <fmt:message key="booking.all.sort.label.invoice"/> (<span style="color: #bf8104">${numberOfBookingInvoice}</span>)
                         </option>
 
                         <option <c:if test="${filterBooking == 3}" >selected</c:if> value=3>
-                            <fmt:message key="booking.all.sort.label.proposal"/>
+                            <fmt:message key="booking.all.sort.label.proposal"/> (<span style="color: #bf8104">${numberOfBookingProposal}</span>)
                         </option>
 
                         <option <c:if test="${filterBooking == 1}" >selected</c:if> value=1>
@@ -231,7 +231,7 @@
                         <td>
                             <p>
                                 <fmt:message key="booking.all.checkin"/> :
-                                <tags:localDate date="${booking.checkin}" pattern="dd.MM.yyyy" /> -
+                                <tags:localDate date="${booking.checkin}" pattern="dd.MM.yyyy" /> <br>
                                 <fmt:message key="booking.all.checkout"/> :
                                 <tags:localDate date="${booking.checkout}" pattern="dd.MM.yyyy" />
                             </p>

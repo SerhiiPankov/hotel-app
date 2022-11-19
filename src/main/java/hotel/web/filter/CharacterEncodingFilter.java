@@ -11,8 +11,26 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
+/**
+ * Filter to set character encoding for servlets
+ *
+ * @author Serhii Pankov
+ * @version 1.0
+ */
 @WebFilter(MAPPING_ALL_PAGES)
 public class CharacterEncodingFilter implements Filter, Constant {
+
+    /**
+     * doFilter method for CharacterEncoding filter <br>
+     *
+     * - setting the character encoding for request
+     *
+     * @param servletRequest ServletRequest
+     * @param servletResponse ServletResponse
+     * @param filterChain FilterChain
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {

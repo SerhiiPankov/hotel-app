@@ -182,7 +182,6 @@
                             <p>
                                 <fmt:message key="request.all.label.id"/> :
                                 ${request.requestId}-<tags:localDate date="${request.date}" pattern="dd.MM.yyyy" />
-                                <tags:localDate date="${request.date}" pattern="dd.MM.yyyy" />
                             </p>
 
                             <p>

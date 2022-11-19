@@ -24,6 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Filter to validate tokens to protect against csrf attacks
+ *
+ * @author Serhii Pankov
+ * @version 1.0
+ */
 @WebFilter({MAPPING_DO_REGISTER,
         MAPPING_USERS_DELETE,
         MAPPING_USERS_RESTORE,
@@ -33,7 +39,20 @@ import org.apache.logging.log4j.Logger;
         MAPPING_AUTHORIZATION,})
 public class ValidateToken implements Filter, Constant {
     private static final Logger logger = LogManager.getLogger(ValidateToken.class);
- 
+
+    /**
+     * doFilter method to validate CSRF tokens <br>
+     *
+     * - getting csrf token parameter <br>
+     * - getting list of valid tokens <br>
+     * - token validity check <br>
+     *
+     * @param request ServletRequest
+     * @param response ServletResponse
+     * @param chain FilterChain
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

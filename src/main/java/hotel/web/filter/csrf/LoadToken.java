@@ -15,9 +15,30 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.RandomStringUtils;
 
+/**
+ * Filter to load tokens to protect against csrf attacks
+ *
+ * @author Serhii Pankov
+ * @version 1.0
+ */
 @WebFilter(MAPPING_ALL_PAGES)
 public class LoadToken implements Filter {
 
+    /**
+     * doFilter method to load CSRF tokens <br>
+     *
+     * - checking for the presence of a session attribute with a list of tokens <br>
+     * - adding an attribute with a list of tokens if it was missing <br>
+     * - token validity check <br>
+     * - checking list of tokens size and deleting old tokens <br>
+     * - generating a new token and adding it to the list <br>
+     *
+     * @param request ServletRequest
+     * @param response ServletResponse
+     * @param chain FilterChain
+     * @throws ServletException Signals a Servlet exception
+     * @throws IOException Signals an I/O exception.
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

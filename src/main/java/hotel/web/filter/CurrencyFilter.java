@@ -23,12 +23,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Filter to set currencies
+ *
+ * @author Serhii Pankov
+ * @version 1.0
+ */
 @WebFilter(MAPPING_ALL_PAGES)
 public class CurrencyFilter implements Filter, Constant {
     private static final Logger logger = LogManager.getLogger(CurrencyFilter.class);
     private static final Injector injector = Injector.getInstance(MAIN_PACKAGE_NAME);
     private final CurrencyService currencyService = (CurrencyService) injector
             .getInstance(CurrencyService.class);
+
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
