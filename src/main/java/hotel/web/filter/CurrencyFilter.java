@@ -36,7 +36,6 @@ public class CurrencyFilter implements Filter, Constant {
     private final CurrencyService currencyService = (CurrencyService) injector
             .getInstance(CurrencyService.class);
 
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
