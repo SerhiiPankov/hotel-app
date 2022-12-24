@@ -80,4 +80,9 @@ public class HotelRoom {
         HotelRoom hotelRoom = (HotelRoom) o;
         return id == hotelRoom.id && Objects.equals(number, hotelRoom.number);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, number);
+    }
 }
